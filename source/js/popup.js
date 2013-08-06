@@ -52,34 +52,19 @@ function PinnedIssues($scope) {
 
 };
 function MostRecentIssues($scope) {
-	$scope.test = "test";
-	//var redmine = new Redmine(storage.apiKey(), storage.apiURL());
-	//if (redmine.connectionEstablished()) {
-	//	getJSON(storage.apiURL() + URL_ISSUES, function (data) {
-	//		if ((data) && (data.issues) && data.issues.length > 0) {
-	//			$scope.issues = data.issues;
-	//		} else {
-	//			$scope.issues = {};
-	//		}
-	//	}, function () {
-	//		$scope.issues = {};
-	//	});
-	//}
-	//else {
-	//	$scope.issues = {};
-	//}
 	$scope.issues = GetUpdateIssues(storage);
 }
 
 function GetUpdateIssues(storage) {
 	console.log('Get issues fired!');
+	var returnIssues = [];
 	var dateNow = new Date();
 	if ((!storage.dateLastUpdated()) || ((storage.dateLastUpdated() - dateNow) > UPDATE_FREQUENCY)) {
 		var redmine = new Redmine(storage.apiKey(), storage.apiURL());
 		var issues = JSON.parse(redmine.issues());
 		var test = redmine.testReturn();
 		for (var i = 0; i < issues.issues.length - 1; i++) {
-			var issue;
+			var issue = null;
 			remoteIssue = issues.issues[i];
 
 			//attempt to find local issue for the freshly retrieved one
@@ -92,19 +77,30 @@ function GetUpdateIssues(storage) {
 			//Not a new issue, need to update
 			if (issue) {
 				issue = [];
-				issue.push({ assigned_to: remoteIssue.assigned_to, description: remoteIssue.description, done_ratio: remoteIssue.done_ratio, due_date: remoteIssue.due_date, estimated_hours: remoteIssue.estimated_hours, priority: remoteIssue.priority, project: remoteIssue.project, start_date: remoteIssue.start_date, status: remoteIssue.status, subject: remoteIssue.subject, tracker: remoteIssue.tracker, updated_on: remoteIssue.updated_on });
+				issue.assigned_to = remoteIssue.assigned_to;
+				issue.description = remoteIssue.description;
+				issue.done_ratio = remoteIssue.done_ratio;
+				issue.due_date = remoteIssue.due_date;
+				issue.estimated_hours = remoteIssue.estimated_hours;
+				issue.priority = remoteIssue.priority
+				issue.project = remoteIssue.project
+				issue.start_date = remoteIssue.start_date
+				issue.status = remoteIssue.status;
+				issue.subject = remoteIssue.subject;
+				issue.tracker = remoteIssue.tracker;
+				issue.updated_on = remoteIssue.updated_on;
 			}
 				//new issue = no need to do any manipulations, just push
 			else {
 				remoteIssue.pinned = false;
 				remoteIssue.stopWatchStart = '';
 				remoteIssue.timeLogged = 0;
-				issue = [];
-				issue.push(remoteIssue);
-
+				issue = remoteIssue;
 			}
+			console.log(i);
 			returnIssues.push(issue);
-		}
+		};
+		storage.setValue(STORAGE_ISSUES, returnIssues);
 		return returnIssues;
 	};
 	return storage.issues;
