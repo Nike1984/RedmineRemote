@@ -12,6 +12,9 @@
 			min-height: 300px;
 			padding-top: 40px;
 		}
+		table {
+			font-size:12px;
+		}
 	</style>
 	<link href="css/style.css" rel="stylesheet" media="screen">
 </head>
@@ -65,21 +68,21 @@
 				<table class="table table-striped table-hover" ng-controller="MostRecentIssues">
 					<thead>
 						<tr>
-							<th>Name</th>
-							<th>Due Date</th>
-							<th>Time Spent</th>
+							<th style="width:50%;">Name</th>
+							<th style="width:30%;">Due Date</th>
+							<th style="width:20%">Timer</th>
 						</tr>
-						</th>
-             
+					</thead>
+
 					<tbody>
 						<!-- SAMPLE DATA -->
 						<!-- SAMPLE DATA -->
 						<tr ng-repeat="issue in issues">
-							<td><strong>{{issue.subject}}</strong></td>
-							<td>{{issue.due_date}}</td>
+							<td><strong>{{issue.shortSubject}}</strong></td>
+							<td>{{issue.due_date_formatted}}</td>
 							<td>{{issue.estimated_hours}}</td>
 						</tr>
-						<tr ng-show='!test'>
+						<tr ng-show='!issues'>
 							<td colspan='3'>No pinned issues!</td>
 						</tr>
 					</tbody>
